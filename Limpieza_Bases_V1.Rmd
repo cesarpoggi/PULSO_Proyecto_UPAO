@@ -1,0 +1,94 @@
+---
+title: "Limpieza y Merge UPAO"
+author: "Cesar Poggi"
+date: "2023-05-22"
+output: html_document
+---
+
+Leer datos
+```{r}
+library(readxl)
+
+D_E1518 <- "https://www.dropbox.com/scl/fi/m3ahgh3tech6pnoqfnrct/Data-E1518-Empleadores-EMPRESAS-2015-2018.xls?dl=1&rlkey=u6pfqbxzuyfmbuyykvvpsiypm"
+destfile <- "Data_E1518_Empleadores_EMPRESAS_2015_2018.xls"
+curl::curl_download(D_E1518, destfile)
+E1518 <- read_excel(destfile)
+
+D_E1819 <- "https://www.dropbox.com/scl/fi/e0jefbn1q1wh7mx0s7kb5/Data-E1819-Empleadores-EMPRESAS-2018-2019.xls?dl=1&rlkey=sxitghkcw9ig7d9j8oy229ftt"
+destfile2 <- "Data_E1819_Empleadores_EMPRESAS_2018_2019.xls"
+curl::curl_download(D_E1819, destfile2)
+E1819 <- read_excel(destfile2)
+
+D_E1920 <- "https://www.dropbox.com/scl/fi/k1nlcidqq7pefjo66vt80/Data-E1920-Empleadores-EMPRESAS-2019-2020.xls?dl=1&rlkey=8c9nam83vul1vp2ayk54qjngo"
+destfile3 <- "Data_E1920_Empleadores_EMPRESAS_2019_2020.xls"
+curl::curl_download(D_E1920, destfile3)
+E1920 <- read_excel(destfile3)
+
+D_IP1518 <- "https://www.dropbox.com/scl/fi/jn74v99xcnr7ltv1d0ry2/Data-IP1518-Empleadores-INST.PUB.-2015-2018.xls?dl=1&rlkey=hor2huo64h7x1w1n8cz3zbbte"
+destfile4 <- "Data_E1518_Empleadores_INST.PUB._2015_2018.xls"
+curl::curl_download(D_IP1518, destfile4)
+IP1518 <- read_excel(destfile4)
+
+D_IP1819 <- "https://www.dropbox.com/scl/fi/5hwdveoih1wz5wx5wc0zt/Data-IP1819-Empleadores-INST.PUB.-2018-2019.xls?dl=1&rlkey=y1dy3e907f7ge7anmls6fxh7j"
+destfile5 <- "Data_E1819_Empleadores_INST.PUB._2018_2019.xls"
+curl::curl_download(D_IP1819, destfile5)
+IP1819 <- read_excel(destfile5)
+
+D_IP1920 <- "https://www.dropbox.com/scl/fi/ytb7g4vryktru1svlk8nz/Data-IP1920-Empleadores-INST.PUB-2019-2020.xls?dl=1&rlkey=hcbvuno3kwiukgih76aswxd36"
+destfile6 <- "Data_E1920_Empleadores_INST.PUB._2019_2020.xls"
+curl::curl_download(D_IP1920, destfile6)
+IP1920 <- read_excel(destfile6)
+```
+
+Estandarizar variables
+```{r}
+library(dplyr)
+
+#Ordenar columnas
+E1518 <- E1518 %>% 
+    select(sort(names(.)))
+E1819 <- E1819 %>% 
+    select(sort(names(.)))
+E1920 <- E1920 %>% 
+    select(sort(names(.)))
+IP1518 <- IP1518 %>% 
+    select(sort(names(.)))
+IP1819 <- IP1819 %>% 
+    select(sort(names(.)))
+IP1920 <- IP1920 %>% 
+    select(sort(names(.)))
+
+#Cambiar nombres E
+for(df in c("E1518"))
+  data.table::setnames(get(df),  c("CARGO","CARRERA", "CORREO_REP", "DIRECCION", "FECHA", "RAZON_SOCIAL", "REP", "RUC", "TELF"))
+
+for(df in c("E1819","E1920"))
+  data.table::setnames(get(df),  c("ANO", "CARGO","CARRERA", "CORREO_REP", "DIRECCION", "FECHA", "RAZON_SOCIAL", "REP", "RUC", "TELF"))
+
+#Cambiar nombres IP
+for(df in c("IP1518","IP1819","IP1920"))
+  data.table::setnames(get(df),  c("ANO", "CARGO","CORREO_REP", "DIRECCION","CARRERA", "FECHA", "RAZON_SOCIAL", "REP", "RUC", "TELF"))
+
+#Crear nueva columna
+E1518$ARCH <- 'E1518'
+E1819$ARCH <- 'E1819'
+E1920$ARCH <- 'E1920'
+IP1518$ARCH <- 'IP1518'
+IP1819$ARCH <- 'IP1819'
+IP1920$ARCH <- 'IP1920'
+```
+
+Merge de las bases
+```{r}
+library(tidyverse)
+
+df_lista <- list(E1518, E1819, E1920, IP1518, IP1819, IP1920)
+
+Empleadores_UPAO <- df_lista %>%
+  reduce(full_join)
+```
+
+Organizar las columnas
+```{r}
+Empleadores_UPAO <- Empleadores_UPAO[,c(11,5,6,9,4,7,1,3,2,8,10)]
+```
