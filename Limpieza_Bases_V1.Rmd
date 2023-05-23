@@ -46,7 +46,7 @@ library(dplyr)
 
 #Ordenar columnas
 E1518 <- E1518 %>% 
-    select(sort(names(.)))
+    select(sort(names(.))) #con dplyr select que es para seleccionar columnas y luego usamos sort que es para ordenar un vector, que en este caso será el vector de los nombres de la variables y para eso utilizamos names
 E1819 <- E1819 %>% 
     select(sort(names(.)))
 E1920 <- E1920 %>% 
@@ -80,7 +80,7 @@ IP1920$ARCH <- 'IP1920'
 
 Merge de las bases
 ```{r}
-library(tidyverse)
+library(tidyverse) #tiene purr para reduce y dplyr para reduce
 
 df_lista <- list(E1518, E1819, E1920, IP1518, IP1819, IP1920)
 
@@ -92,3 +92,23 @@ Organizar las columnas
 ```{r}
 Empleadores_UPAO <- Empleadores_UPAO[,c(11,5,6,9,4,7,1,3,2,8,10)]
 ```
+
+Eliminar casos repetidos, teniendo en cuenta la fecha
+```{r}
+#Cambiamos la variable fecha a formato fecha
+Empleadores_UPAO$FECHA <- as.Date(Empleadores_UPAO$FECHA, '%d/%m/%Y')
+
+Empleadores_UPAO_F <- Empleadores_UPAO %>%  # Order data using dplyr package
+  arrange(RUC, desc(FECHA)) %>%
+  filter(!duplicated(RUC))
+```
+
+Guardemos la base
+```{r}
+Empleadores_UPAO_F <- Empleadores_UPAO_F %>%  # Order data using dplyr package
+  arrange(desc(FECHA))
+
+library("writexl")  
+write_xlsx(Empleadores_UPAO_F,"D:\\Users\\cesar.poggi\\Desktop\\Nueva carpeta\\Empleadores_UPAO_V2.xlsx")
+```
+
