@@ -101,6 +101,10 @@ Empleadores_UPAO$FECHA <- as.Date(Empleadores_UPAO$FECHA, '%d/%m/%Y')
 Empleadores_UPAO_F <- Empleadores_UPAO %>%  # Order data using dplyr package
   arrange(RUC, desc(FECHA)) %>%
   filter(!duplicated(RUC))
+
+Empleadores_UPAO_G <- Empleadores_UPAO %>%  # Order data using dplyr package
+  arrange(RAZON_SOCIAL, desc(FECHA)) %>%
+  filter(!duplicated(RAZON_SOCIAL))
 ```
 
 Guardemos la base
