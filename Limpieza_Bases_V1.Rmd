@@ -24,6 +24,7 @@ destfile3 <- "Data_E1920_Empleadores_EMPRESAS_2019_2020.xls"
 curl::curl_download(D_E1920, destfile3)
 E1920 <- read_excel(destfile3)
 
+
 D_IP1518 <- "https://www.dropbox.com/scl/fi/jn74v99xcnr7ltv1d0ry2/Data-IP1518-Empleadores-INST.PUB.-2015-2018.xls?dl=1&rlkey=hor2huo64h7x1w1n8cz3zbbte"
 destfile4 <- "Data_E1518_Empleadores_INST.PUB._2015_2018.xls"
 curl::curl_download(D_IP1518, destfile4)
@@ -98,13 +99,23 @@ Eliminar casos repetidos, teniendo en cuenta la fecha
 #Cambiamos la variable fecha a formato fecha
 Empleadores_UPAO$FECHA <- as.Date(Empleadores_UPAO$FECHA, '%d/%m/%Y')
 
+library(dplyr)
 Empleadores_UPAO_F <- Empleadores_UPAO %>%  # Order data using dplyr package
   arrange(RUC, desc(FECHA)) %>%
   filter(!duplicated(RUC))
 
-Empleadores_UPAO_G <- Empleadores_UPAO %>%  # Order data using dplyr package
-  arrange(RAZON_SOCIAL, desc(FECHA)) %>%
-  filter(!duplicated(RAZON_SOCIAL))
+Empleadores_UPAO_FF <- Empleadores_UPAO %>%  # Order data using dplyr package
+  arrange(RUC, desc(FECHA)) %>%
+  filter(!duplicated(cbind(RUC, CARGO)))
+
+>>> LIMPIEZA DE CASOS COMO EN TESIS <<<
+
+#Tabla = aggregate(ANO ~ RUC, data = Empleadores_UPAO_F, length) #verificacion de un solo RUC
+#table(Empleadores_UPAO_F$ANO, useNA = "ifany")
+#Tabla1 = aggregate(. ~ CARGO + RUC, data = Empleadores_UPAO_F, length)
+
+#Empleadores_UPAO_FF$CARGO2 <- Empleadores_UPAO_FF$CARGO
+#Tabla2=aggregate(CARGO2 ~ CARGO + RUC, data=Empleadores_UPAO_FF, length)
 ```
 
 Guardemos la base
