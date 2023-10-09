@@ -94,36 +94,165 @@ Organizar las columnas
 Empleadores_UPAO <- Empleadores_UPAO[,c(11,5,6,9,4,7,1,3,2,8,10)]
 ```
 
+
+
+```{r}
+Empleadores_UPAO <- Empleadores_UPAO %>%
+  mutate(CARGO_mod =
+           case_when(str_detect(CARGO, "NOTARIO") ~ 'NOTARIO',
+                     
+                     str_detect(CARGO, "ANALISTA") ~ 'ANALISTA',
+                     
+                     str_detect(CARGO, "INGENIERO") ~ 'INGENIERO',
+                     
+                     str_detect(CARGO, "CONTADOR") |
+                       str_detect(CARGO, "CONTADORA") ~ 'CONTADOR/A',
+                     
+                     str_detect(CARGO, "ABOGADO") |
+                       str_detect(CARGO, "ABOGADA") ~ 'ABOGADO/A',
+                     
+                     str_detect(CARGO, "ARQUITECTO") |
+                       str_detect(CARGO, "ARQUITECTA") ~ 'ARQUITECTO/A',
+                     
+                     str_detect(CARGO, "GOBERNADOR") |
+                       str_detect(CARGO, "GOBIERNO") ~ 'GOBIERNO',
+                     
+                     str_detect(CARGO, "ALCALDE") |
+                       str_detect(CARGO, "ALACALDE") ~ 'ALCALDE',
+                     
+                     str_detect(CARGO, "ASISTENTE") ~ 'ASISTENTE',
+                     
+                     str_detect(CARGO, "APODERADO") |
+                       str_detect(CARGO, "APODERADA") ~ 'APODERADO',
+                     
+                     str_detect(CARGO, "VICEPRESIDENTE") |
+                       str_detect(CARGO, "VICEPRESIDENTA") ~ 'VICEPRESIDENTE',
+                     
+                     str_detect(CARGO, "PRESIDENTE") |
+                       str_detect(CARGO, "PRESIDENTA") ~ 'PRESIDENTE/A',
+                    
+                     
+                     str_detect(CARGO, "SUBGERENTE") |
+                       str_detect(CARGO, "SUB GERENTE")|
+                       str_detect(CARGO, "SU GERENTE")|
+                       str_detect(CARGO, "SUB. GERENTE")|
+                       str_detect(CARGO, "SUB.GERENTE")|
+                       str_detect(CARGO, "SUBGERENCIA")|
+                       str_detect(CARGO, "SUB GERENCIA")|
+                       str_detect(CARGO, "SUB-GERENTE") ~ 'SUBGERENTE/A',
+                     
+                     str_detect(CARGO, "GERENTE") |
+                       str_detect(CARGO, "GERENTA") |
+                       str_detect(CARGO, "GETENTE") |
+                       str_detect(CARGO, "GERENCIA")|
+                       str_detect(CARGO, "GRRENTE") ~ 'GERENTE/GERENCIA',
+                     
+                     str_detect(CARGO, "GERENTE GENERAL") ~ 'GERENTE GENERAL',
+                     
+                     
+                     str_detect(CARGO, "SUPERVISOR") |
+                       str_detect(CARGO, "SUPERVISORA") ~ 'SUPERVISOR/A',
+                     
+                     str_detect(CARGO, "ENCARGADO") |
+                       str_detect(CARGO, "ENCARGADA") ~ 'ENCARGADO/A',
+                     
+                     str_detect(CARGO, "SUPERINTENDENTE")|
+                       str_detect(CARGO, "SUPER INTENDENTE") |
+                       str_detect(CARGO, "SUPERINTENDENCIA") ~ 'SUPERINTENDENTE/A',
+                     
+                     
+                      str_detect(CARGO, "INTENDENTE") |
+                       str_detect(CARGO, "NTENDENTE") |
+                       str_detect(CARGO, "INTENDENTA") |
+                       str_detect(CARGO, "INTENDENCIA") ~ 'INTENDENTE/A',
+                     
+                     str_detect(CARGO, "SUB DIRECTOR")|
+                       str_detect(CARGO, "SUB DIRECTORA") ~ 'SUBDIRECTOR/A',
+                     
+                     str_detect(CARGO, "DIRECTOR")|
+                       str_detect(CARGO, "DIRECTORA") |
+                       str_detect(CARGO, "DITECTORA") ~ 'DIRECTOR/A',
+                     
+                     
+                     str_detect(CARGO, "MANAGER") ~ 'MANAGER',
+                     
+                     str_detect(CARGO, "CORONEL") ~ 'CORONEL',
+                     
+                     str_detect(CARGO, "COORDINADOR") |
+                       str_detect(CARGO, "COORDINADORA") ~ 'COORDINADOR/A',
+                     
+                     str_detect(CARGO, "REPRESENTANTE") ~ 'REPRESENTANTE',
+                     
+                     str_detect(CARGO, "SOCIO") |
+                       str_detect(CARGO, "SOCIA") ~ 'SOCIO/A',
+                     
+                     str_detect(CARGO, "PROMOTOR") |
+                       str_detect(CARGO, "PROMOTORA") ~ 'PROMOTOR/A',
+                     
+                     str_detect(CARGO, "REPRESENTANTE") ~ 'REPRESENTANTE',
+                     
+                     str_detect(CARGO, "ASESOR") |
+                       str_detect(CARGO, "ASESORA") ~ 'ASESOR/A',
+                     
+                     str_detect(CARGO, "SECRETARIO") |
+                       str_detect(CARGO, "SECRETARIA") ~ 'SECRETARIO/A',
+                     
+                     str_detect(CARGO, "ADMINISTRADOR") |
+                       str_detect(CARGO, "ADMINISTRADORA")|
+                       str_detect(CARGO, "ADMINISTRADOR(e)") ~ 'ADMINISTRADOR/A',
+                     
+                     str_detect(CARGO, "RECTOR") |
+                       str_detect(CARGO, "RECTORA") ~ 'RECTOR/A',
+                     
+                     str_detect(CARGO, "DECANO") |
+                       str_detect(CARGO, "DECANA") ~ 'DECANO/A',
+                     
+                     str_detect(CARGO, "JEFE") |
+                       str_detect(CARGO, "JEFA") |
+                       str_detect(CARGO, "JEFE(E)") |
+                       str_detect(CARGO, "JEFE(e)") |
+                       str_detect(CARGO, "JEFATURA")|
+                       str_detect(CARGO, "GEFE") ~ 'JEFE/A'))
+```
+
+
+```{r}
+Empleadores_UPAO$CARGO_mod <- Empleadores_UPAO$CARGO_mod %>%
+  replace_na('OTROS')
+
+Empleadores_UPAO$REP_mod=substr(Empleadores_UPAO$REP, 1,4)
+```
+
+
 Eliminar casos repetidos, teniendo en cuenta la fecha
 ```{r}
 #Cambiamos la variable fecha a formato fecha
 Empleadores_UPAO$FECHA <- as.Date(Empleadores_UPAO$FECHA, '%d/%m/%Y')
 
 library(dplyr)
-Empleadores_UPAO_F <- Empleadores_UPAO %>%  # Order data using dplyr package
+
+Empleadores_UPAO_GG <- Empleadores_UPAO %>%  # Order data using dplyr package
   arrange(RUC, desc(FECHA)) %>%
-  filter(!duplicated(RUC))
+  filter(!duplicated(cbind(RUC, CARGO_mod)))
 
-Empleadores_UPAO_FF <- Empleadores_UPAO %>%  # Order data using dplyr package
+Empleadores_UPAO_FF <- Empleadores_UPAO_GG %>%  # Order data using dplyr package
   arrange(RUC, desc(FECHA)) %>%
-  filter(!duplicated(cbind(RUC, CARGO)))
+  filter(!duplicated(cbind(RUC, REP_mod)))
 
->>> LIMPIEZA DE CASOS COMO EN TESIS <<<
-
-#Tabla = aggregate(ANO ~ RUC, data = Empleadores_UPAO_F, length) #verificacion de un solo RUC
-#table(Empleadores_UPAO_F$ANO, useNA = "ifany")
-#Tabla1 = aggregate(. ~ CARGO + RUC, data = Empleadores_UPAO_F, length)
-
-#Empleadores_UPAO_FF$CARGO2 <- Empleadores_UPAO_FF$CARGO
-#Tabla2=aggregate(CARGO2 ~ CARGO + RUC, data=Empleadores_UPAO_FF, length)
+#Tabla=aggregate(ANO ~ RUC, data=Empleadores_UPAO_FF, length)
 ```
 
 Guardemos la base
 ```{r}
-Empleadores_UPAO_F <- Empleadores_UPAO_F %>%  # Order data using dplyr package
+Empleadores_UPAO_FF <- Empleadores_UPAO_FF %>%  # Order data using dplyr package
   arrange(desc(FECHA))
 
+library(lubridate)
+Empleadores_UPAO_FF$ANO <- year(Empleadores_UPAO_FF$FECHA)
+
+Empleadores_UPAO_FF <- Empleadores_UPAO_FF[,c(1,2,3,5,10,6,13,7,12,8,4,9,11)]
+
 library("writexl")  
-write_xlsx(Empleadores_UPAO_F,"D:\\Users\\cesar.poggi\\Desktop\\Nueva carpeta\\Empleadores_UPAO_V2.xlsx")
+write_xlsx(Empleadores_UPAO_FF,"C:\\Users\\Alejandro\\Documents\\Empleadores_UPAO_V4.xlsx")
 ```
 
